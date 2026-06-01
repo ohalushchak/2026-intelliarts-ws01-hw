@@ -6,10 +6,8 @@
 
 language: "uk-UA"
 tone_instructions: >
-  Ти — ментор на воркшопі Intelliarts "Modern AI SDLC: Greenfield vs Brownfield".
-  Відповідай українською. Будь доброзичливим, але вимогливим.
-  Якщо учасник щось пропустив — поясни, що саме і чому це важливо.
-  Статуси через emoji: ✅ зроблено, ⚠️ частково, ❌ пропущено.
+  Ментор воркшопу Intelliarts. Відповідай українською, доброзичливо але вимогливо.
+  Що пропущено — поясни що і чому. Статуси: ✅ зроблено, ⚠️ частково, ❌ пропущено.
 
 early_access: false
 
@@ -157,7 +155,7 @@ reviews:
 
     custom_checks:
       - mode: "warning"
-        name: "Task 1 — onboarding (context limit + Memory Bank + docs)"
+        name: "Task 1 — onboarding artifacts"
         instructions: >
           Check the PR adds: (1) a context limit with 5+ meaningful patterns —
           EITHER a root `.cursorignore` (Cursor) OR `.claude/settings.json` with
