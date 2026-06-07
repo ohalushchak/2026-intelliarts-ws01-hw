@@ -87,6 +87,10 @@ describe("regression tests", () => {
     mouse.down(10, -10);
     mouse.up(20, 10);
 
+    UI.clickTool("triangle");
+    mouse.down(10, -10);
+    mouse.up(20, 10);
+
     UI.clickTool("arrow");
     mouse.down(40, -10);
     mouse.up(50, 10);
@@ -115,6 +119,7 @@ describe("regression tests", () => {
       "rectangle",
       "diamond",
       "ellipse",
+      "triangle",
       "arrow",
       "line",
       "arrow",
@@ -145,6 +150,7 @@ describe("regression tests", () => {
     [`2${KEYS.R}`, "rectangle", true],
     [`3${KEYS.D}`, "diamond", true],
     [`4${KEYS.O}`, "ellipse", true],
+    [`${KEYS.Y}`, "triangle", true],
     [`5${KEYS.A}`, "arrow", true],
     [`6${KEYS.L}`, "line", true],
     [`7${KEYS.P}`, "freedraw", false],

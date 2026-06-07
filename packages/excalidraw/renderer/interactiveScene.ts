@@ -365,6 +365,28 @@ const renderBindingHighlightForBindableElement_simple = (
           }
 
           break;
+        case "triangle": {
+          const top = {
+            x: suggestedBinding.element.width / 2,
+            y: 0,
+          };
+          const right = {
+            x: suggestedBinding.element.width,
+            y: suggestedBinding.element.height,
+          };
+          const left = {
+            x: 0,
+            y: suggestedBinding.element.height,
+          };
+
+          context.beginPath();
+          context.moveTo(top.x, top.y);
+          context.lineTo(right.x, right.y);
+          context.lineTo(left.x, left.y);
+          context.closePath();
+          context.stroke();
+          break;
+        }
         default:
           {
             const [segments, curves] = deconstructRectanguloidElement(
@@ -461,6 +483,33 @@ const renderBindingHighlightForBindableElement_simple = (
             return pointFrom<GlobalPoint>(rotatedPoint[0], rotatedPoint[1]);
           },
         );
+      } else if (suggestedBinding.element.type === "triangle") {
+        const basePoints = [
+          {
+            x: suggestedBinding.element.width * 0.75,
+            y: suggestedBinding.element.height * 0.5,
+          },
+          {
+            x: suggestedBinding.element.width / 2,
+            y: suggestedBinding.element.height,
+          },
+          {
+            x: suggestedBinding.element.width * 0.25,
+            y: suggestedBinding.element.height * 0.5,
+          },
+        ];
+        midpoints = basePoints.map((point) => {
+          const globalPoint = pointFrom<GlobalPoint>(
+            point.x + suggestedBinding.element.x,
+            point.y + suggestedBinding.element.y,
+          );
+          const rotatedPoint = pointRotateRads(
+            globalPoint,
+            center,
+            suggestedBinding.element.angle,
+          );
+          return pointFrom<GlobalPoint>(rotatedPoint[0], rotatedPoint[1]);
+        });
       } else {
         const basePoints = [
           {
@@ -707,6 +756,28 @@ const renderBindingHighlightForBindableElement_complex = (
           }
 
           break;
+        case "triangle": {
+          const top = {
+            x: (element.width + offset * 2) / 2,
+            y: 0,
+          };
+          const right = {
+            x: element.width + offset * 2,
+            y: element.height + offset * 2,
+          };
+          const left = {
+            x: 0,
+            y: element.height + offset * 2,
+          };
+
+          context.beginPath();
+          context.moveTo(top.x, top.y);
+          context.lineTo(right.x, right.y);
+          context.lineTo(left.x, left.y);
+          context.closePath();
+          context.stroke();
+          break;
+        }
         default:
           {
             const [segments, curves] = deconstructRectanguloidElement(
@@ -827,6 +898,28 @@ const renderBindingHighlightForBindableElement_complex = (
         midpoints = curves.map((curve) => {
           const point = bezierEquation(curve, 0.5);
           const rotatedPoint = pointRotateRads(point, center, element.angle);
+          return {
+            x: rotatedPoint[0] - element.x,
+            y: rotatedPoint[1] - element.y,
+          };
+        });
+      } else if (element.type === "triangle") {
+        const center = elementCenterPoint(element, allElementsMap);
+        const basePoints = [
+          { x: element.width * 0.75, y: element.height * 0.5 },
+          { x: element.width / 2, y: element.height },
+          { x: element.width * 0.25, y: element.height * 0.5 },
+        ];
+        midpoints = basePoints.map((point) => {
+          const globalPoint = pointFrom<GlobalPoint>(
+            point.x + element.x,
+            point.y + element.y,
+          );
+          const rotatedPoint = pointRotateRads(
+            globalPoint,
+            center,
+            element.angle,
+          );
           return {
             x: rotatedPoint[0] - element.x,
             y: rotatedPoint[1] - element.y,

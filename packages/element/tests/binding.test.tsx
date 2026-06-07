@@ -234,6 +234,26 @@ describe("binding for simple arrows", () => {
       expect(arrow.startBinding).toBeNull();
     });
 
+    it("should handle new arrow end point binding on triangle", () => {
+      UI.clickTool("triangle");
+      mouse.downAt(100, 100);
+      mouse.moveTo(200, 200);
+      mouse.up();
+
+      const triangle = API.getSelectedElement();
+
+      UI.clickTool("arrow");
+      mouse.downAt(150, 40);
+      mouse.moveTo(150, 105);
+      mouse.up();
+
+      const arrow = API.getSelectedElement() as ExcalidrawLinearElement;
+
+      expect(arrow.endBinding?.elementId).toBe(triangle.id);
+      expect(arrow.endBinding?.mode).toBe("inside");
+      expect(arrow.startBinding).toBeNull();
+    });
+
     it.skip("should create orbit binding when one of the cursor is inside rectangle", () => {
       // Create a filled solid rectangle
       UI.clickTool("rectangle");

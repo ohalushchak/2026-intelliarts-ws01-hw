@@ -60,6 +60,7 @@ import { updateElbowArrowPoints } from "./elbowArrow";
 import {
   deconstructDiamondElement,
   deconstructRectanguloidElement,
+  deconstructTriangleElement,
   projectFixedPointOntoDiagonal,
 } from "./utils";
 
@@ -2518,9 +2519,13 @@ type Side =
   | "bottom-left"
   | "left"
   | "top-left";
-type ShapeType = "rectangle" | "ellipse" | "diamond";
+type ShapeType = "rectangle" | "ellipse" | "diamond" | "triangle";
 const getShapeType = (element: ExcalidrawBindableElement): ShapeType => {
-  if (element.type === "ellipse" || element.type === "diamond") {
+  if (
+    element.type === "ellipse" ||
+    element.type === "diamond" ||
+    element.type === "triangle"
+  ) {
     return element.type;
   }
   return "rectangle";
@@ -2570,6 +2575,17 @@ const SHAPE_CONFIGS: Record<ShapeType, SectorConfig[]> = {
     { centerAngle: 225, sectorWidth: 75, side: "top-left" },
     { centerAngle: 270, sectorWidth: 15, side: "top" },
     { centerAngle: 315, sectorWidth: 75, side: "top-right" },
+  ],
+
+  triangle: [
+    { centerAngle: 270, sectorWidth: 70, side: "top" },
+    { centerAngle: 330, sectorWidth: 80, side: "top-right" },
+    { centerAngle: 30, sectorWidth: 30, side: "right" },
+    { centerAngle: 90, sectorWidth: 100, side: "bottom" },
+    { centerAngle: 150, sectorWidth: 60, side: "bottom-left" },
+    { centerAngle: 180, sectorWidth: 30, side: "left" },
+    { centerAngle: 210, sectorWidth: 80, side: "top-left" },
+    { centerAngle: 60, sectorWidth: 40, side: "bottom-right" },
   ],
 };
 
@@ -2821,6 +2837,60 @@ export const getBindingSideMidPoint = (
         const ellipseY = radiusY * Math.sin(angle);
         x = ellipseCenterX + ellipseX - OFFSET * 0.707;
         y = ellipseCenterY + ellipseY - OFFSET * 0.707;
+        break;
+      }
+      default: {
+        return null;
+      }
+    }
+
+    return pointRotateRads(pointFrom(x, y), center, bindableElement.angle);
+  }
+
+  if (bindableElement.type === "triangle") {
+    const [rightEdge, bottomEdge, leftEdge] =
+      deconstructTriangleElement(bindableElement)[0];
+    const topPoint = rightEdge[0];
+    const rightPoint = rightEdge[1];
+    const leftPoint = leftEdge[0];
+    const baseMidPoint = getMidPoint(bottomEdge[0], bottomEdge[1]);
+    const rightMidPoint = getMidPoint(rightEdge[0], rightEdge[1]);
+    const leftMidPoint = getMidPoint(leftEdge[0], leftEdge[1]);
+
+    let x: number;
+    let y: number;
+
+    switch (side) {
+      case "top": {
+        x = topPoint[0];
+        y = topPoint[1] - OFFSET;
+        break;
+      }
+      case "right":
+      case "top-right": {
+        x = rightMidPoint[0] + OFFSET * 0.707;
+        y = rightMidPoint[1] - OFFSET * 0.707;
+        break;
+      }
+      case "bottom-right": {
+        x = rightPoint[0] + OFFSET * 0.707;
+        y = rightPoint[1] + OFFSET * 0.707;
+        break;
+      }
+      case "bottom": {
+        x = baseMidPoint[0];
+        y = baseMidPoint[1] + OFFSET;
+        break;
+      }
+      case "bottom-left": {
+        x = leftPoint[0] - OFFSET * 0.707;
+        y = leftPoint[1] + OFFSET * 0.707;
+        break;
+      }
+      case "left":
+      case "top-left": {
+        x = leftMidPoint[0] - OFFSET * 0.707;
+        y = leftMidPoint[1] - OFFSET * 0.707;
         break;
       }
       default: {

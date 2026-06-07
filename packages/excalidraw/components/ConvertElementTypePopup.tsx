@@ -70,6 +70,7 @@ import type {
   ExcalidrawSelectionElement,
   ExcalidrawTextContainer,
   ExcalidrawTextElementWithContainer,
+  ExcalidrawTriangleElement,
   FixedSegment,
 } from "@excalidraw/element/types";
 
@@ -86,6 +87,7 @@ import {
   EllipseIcon,
   LineIcon,
   RectangleIcon,
+  TriangleIcon,
   roundArrowIcon,
   sharpArrowIcon,
 } from "./icons";
@@ -101,10 +103,11 @@ type ExcalidrawConvertibleElement =
   | ExcalidrawRectangleElement
   | ExcalidrawDiamondElement
   | ExcalidrawEllipseElement
+  | ExcalidrawTriangleElement
   | ExcalidrawLinearElement;
 
 // indicates order of switching
-const GENERIC_TYPES = ["rectangle", "diamond", "ellipse"] as const;
+const GENERIC_TYPES = ["rectangle", "diamond", "ellipse", "triangle"] as const;
 // indicates order of switching
 const LINEAR_TYPES = [
   "line",
@@ -303,6 +306,7 @@ const Panel = ({
           ["rectangle", RectangleIcon],
           ["diamond", DiamondIcon],
           ["ellipse", EllipseIcon],
+          ["triangle", TriangleIcon],
         ]
       : [];
 
@@ -832,7 +836,9 @@ const convertElementType = <
         ...element,
         type: targetType,
         roundness:
-          targetType === "diamond" && element.roundness
+          targetType === "triangle"
+            ? null
+            : targetType === "diamond" && element.roundness
             ? {
                 type: isUsingAdaptiveRadius(targetType)
                   ? ROUNDNESS.ADAPTIVE_RADIUS

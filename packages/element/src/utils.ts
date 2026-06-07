@@ -34,7 +34,11 @@ import type {
   Zoom,
 } from "@excalidraw/excalidraw/types";
 
-import { elementCenterPoint, getDiamondPoints } from "./bounds";
+import {
+  elementCenterPoint,
+  getDiamondPoints,
+  getTrianglePoints,
+} from "./bounds";
 
 import { generateLinearCollisionShape } from "./shape";
 
@@ -57,6 +61,7 @@ import type {
   ExcalidrawFreeDrawElement,
   ExcalidrawLinearElement,
   ExcalidrawRectanguloidElement,
+  ExcalidrawTriangleElement,
 } from "./types";
 
 type ElementShape = [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]];
@@ -456,6 +461,60 @@ export function deconstructDiamondElement(
   ];
 
   const shape = [sides, corners.flat()] as ElementShape;
+
+  setElementShapesCacheEntry(element, shape, offset);
+
+  return shape;
+}
+
+export function deconstructTriangleElement(
+  element: ExcalidrawTriangleElement,
+  offset: number = 0,
+): [LineSegment<GlobalPoint>[], Curve<GlobalPoint>[]] {
+  const cachedShape = getElementShapesCacheEntry(element, offset);
+
+  if (cachedShape) {
+    return cachedShape;
+  }
+
+  const [topX, topY, rightX, rightY, leftX, leftY] = getTrianglePoints(element);
+  const center = pointFrom(
+    element.x + element.width / 2,
+    element.y + element.height / 2,
+  );
+
+  const expandPoint = (point: GlobalPoint) => {
+    if (offset === 0) {
+      return point;
+    }
+
+    return pointFromVector(
+      vectorScale(
+        vectorNormalize(vectorFromPoint(point, center, 0.0001)),
+        offset,
+      ),
+      point,
+    );
+  };
+
+  const top = expandPoint(
+    pointFrom<GlobalPoint>(element.x + topX, element.y + topY),
+  );
+  const right = expandPoint(
+    pointFrom<GlobalPoint>(element.x + rightX, element.y + rightY),
+  );
+  const left = expandPoint(
+    pointFrom<GlobalPoint>(element.x + leftX, element.y + leftY),
+  );
+
+  const shape = [
+    [
+      lineSegment<GlobalPoint>(top, right),
+      lineSegment<GlobalPoint>(right, left),
+      lineSegment<GlobalPoint>(left, top),
+    ],
+    [],
+  ] as ElementShape;
 
   setElementShapesCacheEntry(element, shape, offset);
 

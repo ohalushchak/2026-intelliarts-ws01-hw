@@ -12,6 +12,7 @@ import {
   deconstructDiamondElement,
   deconstructLinearOrFreeDrawElement,
   deconstructRectanguloidElement,
+  deconstructTriangleElement,
 } from "./utils";
 
 import { elementCenterPoint } from "./bounds";
@@ -24,6 +25,7 @@ import type {
   ExcalidrawFreeDrawElement,
   ExcalidrawLinearElement,
   ExcalidrawRectanguloidElement,
+  ExcalidrawTriangleElement,
 } from "./types";
 
 export const distanceToElement = (
@@ -45,6 +47,8 @@ export const distanceToElement = (
       return distanceToDiamondElement(element, elementsMap, p);
     case "ellipse":
       return distanceToEllipseElement(element, elementsMap, p);
+    case "triangle":
+      return distanceToTriangleElement(element, elementsMap, p);
     case "line":
     case "arrow":
     case "freedraw":
@@ -128,6 +132,20 @@ const distanceToEllipseElement = (
     // Instead of rotating the ellipse, rotate the point to the inverse angle
     pointRotateRads(p, center, -element.angle as Radians),
     ellipse(center, element.width / 2, element.height / 2),
+  );
+};
+
+const distanceToTriangleElement = (
+  element: ExcalidrawTriangleElement,
+  elementsMap: ElementsMap,
+  p: GlobalPoint,
+): number => {
+  const center = elementCenterPoint(element, elementsMap);
+  const rotatedPoint = pointRotateRads(p, center, -element.angle as Radians);
+  const [sides] = deconstructTriangleElement(element);
+
+  return Math.min(
+    ...sides.map((side) => distanceToLineSegment(rotatedPoint, side)),
   );
 };
 

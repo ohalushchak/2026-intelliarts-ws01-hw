@@ -5,6 +5,7 @@ export const hasBackground = (type: ElementOrToolType) =>
   type === "iframe" ||
   type === "embeddable" ||
   type === "ellipse" ||
+  type === "triangle" ||
   type === "diamond" ||
   type === "line" ||
   type === "freedraw";
@@ -12,6 +13,7 @@ export const hasBackground = (type: ElementOrToolType) =>
 export const hasStrokeColor = (type: ElementOrToolType) =>
   type === "rectangle" ||
   type === "ellipse" ||
+  type === "triangle" ||
   type === "diamond" ||
   type === "freedraw" ||
   type === "arrow" ||
@@ -24,6 +26,7 @@ export const hasStrokeWidth = (type: ElementOrToolType) =>
   type === "iframe" ||
   type === "embeddable" ||
   type === "ellipse" ||
+  type === "triangle" ||
   type === "diamond" ||
   type === "freedraw" ||
   type === "arrow" ||
@@ -34,6 +37,7 @@ export const hasStrokeStyle = (type: ElementOrToolType) =>
   type === "iframe" ||
   type === "embeddable" ||
   type === "ellipse" ||
+  type === "triangle" ||
   type === "diamond" ||
   type === "arrow" ||
   type === "line";

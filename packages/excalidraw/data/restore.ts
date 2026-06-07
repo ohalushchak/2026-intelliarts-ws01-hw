@@ -169,6 +169,7 @@ export const AllowedExcalidrawActiveTools: Record<
   rectangle: true,
   diamond: true,
   ellipse: true,
+  triangle: true,
   line: true,
   image: true,
   arrow: true,
@@ -638,6 +639,7 @@ export const restoreElement = (
     case "ellipse":
     case "rectangle":
     case "diamond":
+    case "triangle":
     case "iframe":
     case "embeddable":
       return restoreElementWithProperties(element, {});

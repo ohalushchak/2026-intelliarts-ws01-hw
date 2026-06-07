@@ -93,6 +93,27 @@ describe("export", () => {
     expect(svgText).toMatchSnapshot(`svg-embdedded scene export output`);
   });
 
+  it("exports triangle elements to svg", async () => {
+    const svg = await exportToSvg(
+      [
+        API.createElement({
+          type: "triangle",
+          x: 10,
+          y: 20,
+          width: 120,
+          height: 100,
+          backgroundColor: "#ced4da",
+        }),
+      ],
+      { ...getDefaultAppState(), exportEmbedScene: false },
+      {},
+    );
+
+    const svgText = svg.outerHTML;
+
+    expect(svgText).toContain("<path");
+  });
+
   it("import embedded png (legacy v1)", async () => {
     await API.drop([
       {

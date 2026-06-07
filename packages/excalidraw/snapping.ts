@@ -235,34 +235,30 @@ export const getElementsCorners = (
     const halfHeight = (y2 - y1) / 2;
 
     if (
-      (element.type === "diamond" || element.type === "ellipse") &&
+      (element.type === "diamond" ||
+        element.type === "ellipse" ||
+        element.type === "triangle") &&
       !boundingBoxCorners
     ) {
-      const leftMid = pointRotateRads<GlobalPoint>(
-        pointFrom(x1, y1 + halfHeight),
-        pointFrom(cx, cy),
-        element.angle,
-      );
-      const topMid = pointRotateRads<GlobalPoint>(
-        pointFrom(x1 + halfWidth, y1),
-        pointFrom(cx, cy),
-        element.angle,
-      );
-      const rightMid = pointRotateRads<GlobalPoint>(
-        pointFrom(x2, y1 + halfHeight),
-        pointFrom(cx, cy),
-        element.angle,
-      );
-      const bottomMid = pointRotateRads<GlobalPoint>(
-        pointFrom(x1 + halfWidth, y2),
-        pointFrom(cx, cy),
-        element.angle,
-      );
       const center = pointFrom<GlobalPoint>(cx, cy);
+      const localMidPoints =
+        element.type === "triangle"
+          ? [
+              pointFrom<GlobalPoint>(x1 + halfWidth * 1.5, y1 + halfHeight),
+              pointFrom<GlobalPoint>(x1 + halfWidth, y2),
+              pointFrom<GlobalPoint>(x1 + halfWidth * 0.5, y1 + halfHeight),
+            ]
+          : [
+              pointFrom<GlobalPoint>(x1, y1 + halfHeight),
+              pointFrom<GlobalPoint>(x1 + halfWidth, y1),
+              pointFrom<GlobalPoint>(x2, y1 + halfHeight),
+              pointFrom<GlobalPoint>(x1 + halfWidth, y2),
+            ];
+      const midpoints = localMidPoints.map((point) =>
+        pointRotateRads<GlobalPoint>(point, center, element.angle),
+      );
 
-      result = omitCenter
-        ? [leftMid, topMid, rightMid, bottomMid]
-        : [leftMid, topMid, rightMid, bottomMid, center];
+      result = omitCenter ? midpoints : [...midpoints, center];
     } else {
       const topLeft = pointRotateRads<GlobalPoint>(
         pointFrom(x1, y1),
